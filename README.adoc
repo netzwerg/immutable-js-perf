@@ -1,0 +1,54 @@
+= Potential Immutable.js Performance Regression
+
+`src/benchmarks.js` measures performance of filtering an already sorted list of elements.
+The list is 1 million items long, the predicate matches after the first 10 items (i.e. relatively early).
+
+Thus, the following expectations arise:
+* `filter` will be slow because it always needs to traverse the complete list
+* `skipUntil` and `findIndex` should be:
+** faster than `filter`
+** both be of similar performance
+
+These expectations hold true for 3.8.2 but *not* for 4.0.0-rc.12, *potentially indicating a regression*.
+
+== Running Test
+
+[source]
+----
+yarn install
+yarn run start
+----
+
+Compare `4.0.0-rc.12` and `3.8.2` (change version in `package.json`)
+
+== Results
+
+_macOS Mojave, 2.9 GHz Intel Core i9, node v12.9.1_
+
+=== 4.0.0-rc.12
+
+[source]
+----
+via filter:
+    6 ops/s, ±11.66%         | 100% slower
+
+via skipUntil:
+    5 ops/s, ±7.81%         | slowest, 100% slower
+
+via findIndex/takeLast:
+    680 918 ops/s, ±5.81%   | fastest
+----
+
+=== 3.8.2
+
+[source]
+----
+via filter:
+    6 ops/s, ±1.89%   | 14.29% slower
+
+via skipUntil:
+    7 ops/s, ±2.49%   | fastest
+
+via findIndex/takeLast:
+    5 ops/s, ±6.30%   | slowest, 28.57% slower
+----
