@@ -4,6 +4,7 @@
 The list is 1 million items long, the predicate matches after the first 10 items (i.e. relatively early).
 
 Thus, the following expectations arise:
+
 * `filter` will be slow because it always needs to traverse the complete list
 * `skipUntil` and `findIndex` should be:
 ** faster than `filter`
